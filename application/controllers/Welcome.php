@@ -58,6 +58,28 @@ class Welcome extends Application {
 	{
 		//$this->load->view('welcome_message');
                 //$this->load->view('welcome');
+            
+            //get the newest images from our model
+            $pix = $this->images->newest();
+            
+            //build an array of formatted cells for them
+            foreach ($pix as $picture)
+                $cells[] = $this->parser->parse('_cell', (array) $picture, true);
+            
+            //prime THE TABLE CLASS
+            $this->load->library('table');
+            $parms = array(
+                'table_open' => '<table class="gallery">',
+                'cell_start' => '<td class="oneimage">',
+                'cell_alt_start' => '<td class="oneimage">'
+            );
+            $this->table->set_template($parms);
+            
+            //finally generate the table
+            $rows = $this->table->make_columns($cells, 3);
+            $this->data['thetable'] = $this->table->generate($rows);
+            
+            //the old stuff
                 $this->data['pagebody'] = 'welcome';
                 $this->render();
 	}
